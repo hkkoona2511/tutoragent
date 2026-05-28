@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TutorAgent — AI Learning Assistant</title>
+  <meta name="description" content="An intelligent AI tutor powered by GROQ LLMs and local Ollama models. Ask questions, explore concepts, and get precise answers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Animated background orbs -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="app-shell">
+
+    <!-- ══ HEADER ══════════════════════════════════════════════════════ -->
+    <header class="app-header" role="banner">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="14" r="13" stroke="url(#g1)" stroke-width="2"/>
+              <path d="M8 14 C8 10 11 8 14 8 C17 8 20 10 20 14 C20 18 17 20 14 20" stroke="url(#g1)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="14" cy="14" r="3" fill="url(#g1)"/>
+              <defs>
+                <linearGradient id="g1" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#818cf8"/>
+                  <stop offset="1" stop-color="#38bdf8"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">TutorAgent</span>
+            <span class="brand-sub">AI Learning Assistant</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-status" id="headerStatus">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusLabel">Ready</span>
+          </div>
+          <!-- Theme Toggle -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Light / Dark theme" aria-label="Toggle colour theme">
+            <span class="theme-icon theme-icon--dark" id="themeIconDark" aria-hidden="true">
+              <!-- Moon -->
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </span>
+            <span class="theme-icon theme-icon--light" id="themeIconLight" aria-hidden="true">
+              <!-- Sun -->
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            </span>
+            <span class="theme-toggle-track">
+              <span class="theme-toggle-thumb"></span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══ MAIN CONTENT ══════════════════════════════════════════════ -->
+    <main class="main-content" role="main">
+      <div class="panel-grid">
+
+        <!-- ── LEFT PANEL: Configuration ──────────────────────────── -->
+        <aside class="panel panel-config glass" aria-label="Configuration Panel">
+
+          <!-- Section 1: API Key -->
+          <section class="config-section" aria-labelledby="apiKeyHeading">
+            <div class="section-header">
+              <span class="section-icon" aria-hidden="true">🔑</span>
+              <h2 class="section-title" id="apiKeyHeading">GROQ API Key</h2>
+            </div>
+            <div class="api-key-wrapper">
+              <div class="input-group">
+                <input
+                  type="password"
+                  id="groqApiKey"
+                  class="text-input api-key-input mono"
+                  placeholder="gsk_••••••••••••••••••••••••••"
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-label="GROQ API Key"
+                />
+                <div class="input-actions">
+                  <button id="toggleKeyVisibility" class="icon-btn" title="Show / Hide Key" aria-label="Toggle key visibility">
+                    <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </button>
+                  <button id="copyApiKey" class="icon-btn" title="Copy API Key" aria-label="Copy API key">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p class="hint-text">Paste your GROQ key from <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a></p>
+            </div>
+          </section>
+
+          <div class="divider"></div>
+
+          <!-- Section 2: Model Selection -->
+          <section class="config-section" aria-labelledby="modelHeading">
+            <div class="section-header">
+              <span class="section-icon" aria-hidden="true">🤖</span>
+              <h2 class="section-title" id="modelHeading">Model Selection</h2>
+            </div>
+
+            <div class="model-group" id="modelGroup" role="radiogroup" aria-labelledby="modelHeading">
+
+              <!-- GROQ Models -->
+              <div class="model-category-label">☁️ GROQ Cloud</div>
+
+              <label class="model-radio-card" for="modelLlama4Scout">
+                <input type="radio" id="modelLlama4Scout" name="model" value="meta-llama/llama-4-scout-17b-16e-instruct" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Llama 4 Scout</span>
+                    <span class="model-tag">17B · 16E · Fast</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelLlama4Maverick">
+                <input type="radio" id="modelLlama4Maverick" name="model" value="meta-llama/llama-4-maverick-17b-128e-instruct" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Llama 4 Maverick</span>
+                    <span class="model-tag">17B · 128E · Powerful</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelLlama370b">
+                <input type="radio" id="modelLlama370b" name="model" value="llama-3.3-70b-versatile" checked />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Llama 3.3 70B</span>
+                    <span class="model-tag">Versatile · Default</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelLlama38b">
+                <input type="radio" id="modelLlama38b" name="model" value="llama3-8b-8192" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Llama 3 8B</span>
+                    <span class="model-tag">8192 ctx · Lightweight</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelMixtral">
+                <input type="radio" id="modelMixtral" name="model" value="mixtral-8x7b-32768" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Mixtral 8×7B</span>
+                    <span class="model-tag">32768 ctx · MoE</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelGemma2">
+                <input type="radio" id="modelGemma2" name="model" value="gemma2-9b-it" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Gemma 2 9B</span>
+                    <span class="model-tag">Instruction Tuned</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelDeepSeek">
+                <input type="radio" id="modelDeepSeek" name="model" value="deepseek-r1-distill-llama-70b" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">DeepSeek R1</span>
+                    <span class="model-tag">70B Distill · Reasoning</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelQwen">
+                <input type="radio" id="modelQwen" name="model" value="qwen-qwq-32b" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Qwen QwQ 32B</span>
+                    <span class="model-tag">Reasoning · Chain-of-Thought</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <!-- Local Ollama -->
+              <div class="model-category-label">🏠 Local</div>
+
+              <label class="model-radio-card model-radio-card--local" for="modelOllama">
+                <input type="radio" id="modelOllama" name="model" value="ollama" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Ollama (LOCAL)</span>
+                    <span class="model-tag">localhost:11434</span>
+                  </div>
+                  <span class="model-badge badge-local">LOCAL</span>
+                </div>
+              </label>
+
+              <!-- Ollama sub-options (shown when Ollama is selected) -->
+              <div class="ollama-sub-panel" id="ollamaSubPanel">
+                <label class="sub-label" for="ollamaModel">Ollama Model Name</label>
+                <input
+                  type="text"
+                  id="ollamaModel"
+                  class="text-input mono"
+                  placeholder="llama3, mistral, phi3…"
+                  value="llama3"
+                  aria-label="Ollama model name"
+                />
+                <label class="sub-label" for="ollamaHost">Host URL</label>
+                <input
+                  type="text"
+                  id="ollamaHost"
+                  class="text-input mono"
+                  value="http://localhost:11434"
+                  aria-label="Ollama host URL"
+                />
+              </div>
+
+            </div>
+          </section>
+
+        </aside>
+
+        <!-- ── RIGHT PANEL: Chat Interface ────────────────────────── -->
+        <section class="panel panel-chat" aria-label="Chat Interface">
+
+          <!-- System Context -->
+          <div class="chat-block" aria-labelledby="sysCtxLabel">
+            <div class="chat-block-header">
+              <span class="block-icon" aria-hidden="true">⚙️</span>
+              <label class="block-label" id="sysCtxLabel" for="systemContext">System Context</label>
+              <div class="block-actions">
+                <button class="chip-btn" id="clearSystemCtx" title="Clear" aria-label="Clear system context">Clear</button>
+                <button class="chip-btn" id="copySystemCtx" title="Copy" aria-label="Copy system context">Copy</button>
+              </div>
+            </div>
+            <textarea
+              id="systemContext"
+              class="chat-textarea"
+              rows="4"
+              placeholder="Define the AI's persona, goals, and constraints here…"
+              spellcheck="true"
+              aria-label="System context input"
+            >You are a helpful Agentic AI tutor. Keep replies precise sentences.</textarea>
+          </div>
+
+          <!-- User Prompt -->
+          <div class="chat-block" aria-labelledby="userPromptLabel">
+            <div class="chat-block-header">
+              <span class="block-icon" aria-hidden="true">💬</span>
+              <label class="block-label" id="userPromptLabel" for="userPrompt">User Prompt</label>
+              <div class="block-actions">
+                <button class="chip-btn" id="clearUserPrompt" title="Clear" aria-label="Clear user prompt">Clear</button>
+                <button class="chip-btn" id="copyUserPrompt" title="Copy" aria-label="Copy user prompt">Copy</button>
+              </div>
+            </div>
+            <textarea
+              id="userPrompt"
+              class="chat-textarea chat-textarea--user"
+              rows="5"
+              placeholder="Explain in detail about Mechanics &amp; System Architecture Design Patterns of Generative AI"
+              spellcheck="true"
+              aria-label="User prompt input"
+            ></textarea>
+
+            <!-- Send Button -->
+            <div class="send-row">
+              <div class="token-counter" id="tokenCounter">0 chars</div>
+              <button class="send-btn" id="sendBtn" aria-label="Send prompt to model">
+                <span id="sendBtnLabel">Send ✦</span>
+                <span id="sendSpinner" class="spinner" aria-hidden="true" hidden></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Response -->
+          <div class="chat-block chat-block--response" aria-labelledby="responseLabel">
+            <div class="chat-block-header">
+              <span class="block-icon" aria-hidden="true">🧠</span>
+              <label class="block-label" id="responseLabel" for="modelResponse">Model Response</label>
+              <div class="block-actions response-actions">
+                <button class="chip-btn" id="editResponseBtn" title="Toggle Edit" aria-label="Toggle response edit mode">Edit</button>
+                <button class="chip-btn" id="copyResponseBtn" title="Copy" aria-label="Copy response">Copy</button>
+                <button class="chip-btn" id="downloadTxtBtn" title="Download as .txt" aria-label="Download response as text file">↓ TXT</button>
+                <button class="chip-btn chip-btn--primary" id="downloadPdfBtn" title="Export PDF" aria-label="Export response as PDF">↓ PDF</button>
+              </div>
+            </div>
+            <div class="response-wrapper">
+              <textarea
+                id="modelResponse"
+                class="chat-textarea chat-textarea--response"
+                rows="14"
+                readonly
+                placeholder="Explain in detail about Mechanics &amp; System Architecture Design Patterns of Generative AI"
+                spellcheck="false"
+                aria-label="Model response output"
+                aria-live="polite"
+              ></textarea>
+              <div class="response-meta" id="responseMeta" hidden>
+                <span id="responseModelTag"></span>
+                <span id="responseTime"></span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </div><!-- /.panel-grid -->
+    </main>
+
+    <!-- ══ FOOTER ═══════════════════════════════════════════════════ -->
+    <footer class="app-footer" role="contentinfo">
+      <span>TutorAgent © 2026</span>
+      <span class="footer-sep">·</span>
+      <span>Powered by GROQ &amp; Ollama</span>
+      <span class="footer-sep">·</span>
+      <a href="https://console.groq.com" target="_blank" rel="noopener">GROQ Console</a>
+    </footer>
+
+  </div><!-- /.app-shell -->
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
