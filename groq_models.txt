@@ -1,0 +1,7 @@
+Raw GROQ models list fetched via API:
+
+object data
+------ ----
+list   {@{id=llama-3.3-70b-versatile; object=model; created=1733447754; owned_by=Meta; active=True; context_window=...; deprecated=False}
+@{id=gemma-2-9b; ...; active=False; deprecated=True}
+... (truncated)
