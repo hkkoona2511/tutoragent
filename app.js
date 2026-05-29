@@ -55,13 +55,13 @@ let streamTimeout = null;
 /* ── GROQ Models map (value → display name) ──────────────── */
 const MODEL_LABELS = {
   'meta-llama/llama-4-scout-17b-16e-instruct':    'Llama 4 Scout · GROQ',
-  'meta-llama/llama-4-maverick-17b-128e-instruct':'Llama 4 Maverick · GROQ',
+
   'llama-3.3-70b-versatile':                       'Llama 3.3 70B · GROQ',
-  'llama3-8b-8192':                                'Llama 3 8B · GROQ',
-  'mixtral-8x7b-32768':                            'Mixtral 8×7B · GROQ',
-  'gemma2-9b-it':                                  'Gemma 2 9B · GROQ',
-  'deepseek-r1-distill-llama-70b':                 'DeepSeek R1 70B · GROQ',
-  'qwen-qwq-32b':                                  'Qwen QwQ 32B · GROQ',
+
+
+
+
+
   'ollama':                                        'Ollama (LOCAL)',
 };
 

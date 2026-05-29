@@ -523,6 +523,11 @@ a:hover { text-decoration: underline; }
   opacity: 0;
   width: 0;
   height: 0;
+
+/* Hide deprecated model options */
+.model-radio-card.deprecated {
+  display: none !important;
+}
 }
 
 .radio-card-body {
