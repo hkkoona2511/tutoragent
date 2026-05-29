@@ -4,7 +4,7 @@ TutorAgent is an intelligent AI tutor web application powered by **GROQ LLMs** a
 
 ## ✨ Features
 
-- **Multi-Model Support**: Access blazing-fast cloud models via GROQ (Llama 3.3, Llama 4, Mixtral, Gemma, DeepSeek, Qwen).
+- **Multi-Model Support**: Access blazing-fast cloud models via GROQ (Llama 3.3, Llama 4).
 - **Local Privacy**: Support for local models running via Ollama (e.g., Llama 3, Mistral) for offline, private use.
 - **Customizable Context**: Define the AI's persona, goals, and constraints with a customizable System Context.
 - **Export Options**: Easily copy responses, or export them as `.txt` or `.pdf` files.
