@@ -4,11 +4,16 @@
     "description": "Tutor Agent",
     "main": "server.js",
     "scripts": {
-        "start": "node server.js"
+        "start": "node server.js",
+        "test": "mocha"
     },
     "dependencies": {
-        "@google/generative-ai": "^0.26.0",
+        "@google/generative-ai": "latest",
         "dotenv": "^17.2.3",
         "express": "^4.19.2"
+    },
+    "devDependencies": {
+        "mocha": "^11.7.6",
+        "supertest": "^7.2.2"
     }
 }
