@@ -119,7 +119,7 @@
 
           <div class="divider"></div>
 
-          <!-- Section 2: Model Selection -->
+          <!-- Model Selection -->
           <section class="config-section" aria-labelledby="modelHeading">
             <div class="section-header">
               <span class="section-icon" aria-hidden="true">🤖</span>
@@ -127,18 +127,43 @@
             </div>
 
             <div class="model-group" id="modelGroup" role="radiogroup" aria-labelledby="modelHeading">
-
               <!-- GROQ Models -->
               <div class="model-category-label">☁️ GROQ Cloud</div>
 
+              <!-- Llama 4 Scout (stand‑alone) -->
               <label class="model-radio-card" for="modelLlama4Scout">
-                <input type="radio" id="modelLlama4Scout" name="model" value="meta-llama/llama-4-scout-17b-16e-instruct" />
+                <input type="radio" id="modelLlama4Scout"
+                       name="model"
+                       value="meta-llama/llama-4-scout-17b-16e-instruct"
+                       checked />
                 <div class="radio-card-body">
                   <div class="radio-indicator"></div>
                   <div class="model-info">
                     <span class="model-name">Llama 4 Scout</span>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Local Ollama (stand‑alone) -->
+              <label class="model-radio-card" for="modelLocalOllama">
+                <input type="radio" id="modelLocalOllama"
+                       name="model"
+                       value="ollama" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Local (Ollama)</span>
+                    <span class="model-tag">Local</span>
+                  </div>
+                  <span class="model-badge badge-ollama">Ollama</span>
+                </div>
+              </label>
+
+              <!-- Llama 3.3 70B (default GROQ) -->
               <label class="model-radio-card" for="modelLlama370b">
-                <input type="radio" id="modelLlama370b" name="model" value="llama-3.3-70b-versatile" checked />
+                <input type="radio" id="modelLlama370b"
+                       name="model"
+                       value="llama-3.3-70b-versatile" />
                 <div class="radio-card-body">
                   <div class="radio-indicator"></div>
                   <div class="model-info">
@@ -149,40 +174,7 @@
                 </div>
               </label>
 
-              <!-- Local Ollama -->
-              <div class="model-category-label">🏠 Local</div>
 
-              <label class="model-radio-card model-radio-card--local" for="modelOllama">
-                <input type="radio" id="modelOllama" name="model" value="ollama" />
-                <div class="radio-card-body">
-                  <div class="radio-indicator"></div>
-                  <div class="model-info">
-                    <span class="model-name">Ollama (LOCAL)</span>
-                    <span class="model-tag">localhost:11434</span>
-                  </div>
-                  <span class="model-badge badge-local">LOCAL</span>
-                </div>
-              </label>
-
-              <!-- Ollama sub-options (shown when Ollama is selected) -->
-              <div class="ollama-sub-panel" id="ollamaSubPanel">
-                <label class="sub-label" for="ollamaModel">Ollama Model Name</label>
-                <input
-                  type="text"
-                  id="ollamaModel"
-                  class="text-input mono"
-                  placeholder="llama3, mistral, phi3…"
-                  value="llama3"
-                  aria-label="Ollama model name"
-                />
-                <label class="sub-label" for="ollamaHost">Host URL</label>
-                <input
-                  type="text"
-                  id="ollamaHost"
-                  class="text-input mono"
-                  value="http://localhost:11434"
-                  aria-label="Ollama host URL"
-                />
               </div>
 
             </div>
