@@ -16,3 +16,35 @@ venv/
 # Node
 node_modules
 package-lock.json
+
+# ------------------------------------------------------------------------
+# Official Terraform .gitignore Template
+# ------------------------------------------------------------------------
+
+# Local .terraform directories (contains cached providers, modules, and plugins)
+**/.terraform/*
+
+# .tfstate files (contains sensitive plain-text infrastructure state data)
+*.tfstate
+*.tfstate.*
+
+# Crash log files (generated if a terraform command fails unexpectedly)
+crash.log
+crash.*.log
+
+# Exclude variable files containing sensitive data (passwords, api keys, etc.)
+*.tfvars
+*.tfvars.json
+
+# Exclude override files (used for quick, uncommitted local modifications)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include override files you explicitly wish to add to version control
+# !example_override.tf
+
+# CLI configuration files
+.terraformrc
+terraform.rc
