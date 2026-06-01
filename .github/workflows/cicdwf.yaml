@@ -7,6 +7,9 @@ on:
 jobs:
   run-iacdeploy:
     uses: ./.github/workflows/iac.yaml
+    secrets:
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   build-and-deploy:
     needs: run-iacdeploy
     runs-on: ubuntu-latest
@@ -19,7 +22,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          aws-access-key-id: $(env.AWS_ACCESS_KEY_ID)
-          aws-secret-access-key: $(env.AWS_SECRET_ACCESS_KEY)
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'ap-south-1'
 
