@@ -46,6 +46,18 @@ const statusLabel        = $('statusLabel');
 const toast              = $('toast');
 const themeToggleBtn     = $('themeToggleBtn');
 
+// Verify all critical DOM elements exist
+const CRITICAL_ELEMENTS = {
+  sendBtn, userPromptTA, systemCtxTA, groqApiKeyInput, 
+  modelResponseTA, statusDot, toast
+};
+
+Object.entries(CRITICAL_ELEMENTS).forEach(([name, el]) => {
+  if (!el) console.warn(`⚠️  DOM element missing: ${name}`);
+});
+
+if (sendBtn) console.log('✅ SEND button DOM element found');
+
 /* ── State ────────────────────────────────────────────────── */
 let isBusy        = false;
 let isResponseEditable = false;
@@ -92,6 +104,9 @@ const MODEL_LABELS = {
 
   // Token counter update
   updateTokenCounter();
+
+  console.log('%c✅ TutorAgent initialized successfully. SEND button is ready to use.', 
+    'color:#34d399;font-weight:bold;font-size:12px;');
 })();
 
 /* ══════════════════════════════════════════════════════════
@@ -105,13 +120,18 @@ function applyTheme(theme) {
   );
 }
 
-themeToggleBtn.addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme') ?? 'dark';
-  const next    = current === 'dark' ? 'light' : 'dark';
-  applyTheme(next);
-  localStorage.setItem('tutor_theme', next);
-  showToast(next === 'light' ? '☀️ Switched to Light theme' : '🌙 Switched to Dark theme');
-});
+// Attach theme toggle listener with null check
+if (!themeToggleBtn) {
+  console.warn('⚠️  Theme toggle button not found');
+} else {
+  themeToggleBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') ?? 'dark';
+    const next    = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    localStorage.setItem('tutor_theme', next);
+    showToast(next === 'light' ? '☀️ Switched to Light theme' : '🌙 Switched to Dark theme');
+  });
+}
 
 /* ══════════════════════════════════════════════════════════
    STATUS HELPERS
@@ -135,26 +155,36 @@ function showToast(msg, duration = 2600) {
 /* ═══════════════════════════════════════════════════════════
    API KEY — toggle visibility & copy
    ═══════════════════════════════════════════════════════════ */
-toggleKeyBtn.addEventListener('click', () => {
-  const isHidden = groqApiKeyInput.type === 'password';
-  groqApiKeyInput.type = isHidden ? 'text' : 'password';
-  eyeIcon.innerHTML = isHidden
-    ? /* eye-off */
-      `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
-    : /* eye */
-      `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
-  showToast(isHidden ? '🔓 Key visible' : '🔒 Key hidden');
-});
+if (!toggleKeyBtn) {
+  console.warn('⚠️  Toggle key visibility button not found');
+} else {
+  toggleKeyBtn.addEventListener('click', () => {
+    const isHidden = groqApiKeyInput.type === 'password';
+    groqApiKeyInput.type = isHidden ? 'text' : 'password';
+    eyeIcon.innerHTML = isHidden
+      ? /* eye-off */
+        `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+      : /* eye */
+        `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    showToast(isHidden ? '🔓 Key visible' : '🔒 Key hidden');
+  });
+}
 
-groqApiKeyInput.addEventListener('input', () => {
-  sessionStorage.setItem('tutor_groq_key', groqApiKeyInput.value.trim());
-});
+if (groqApiKeyInput) {
+  groqApiKeyInput.addEventListener('input', () => {
+    sessionStorage.setItem('tutor_groq_key', groqApiKeyInput.value.trim());
+  });
+}
 
-copyApiKeyBtn.addEventListener('click', async () => {
-  const key = groqApiKeyInput.value.trim();
-  if (!key) { showToast('⚠️ No API key to copy'); return; }
-  await copyToClipboard(key, '🔑 API key copied');
-});
+if (!copyApiKeyBtn) {
+  console.warn('⚠️  Copy API key button not found');
+} else {
+  copyApiKeyBtn.addEventListener('click', async () => {
+    const key = groqApiKeyInput.value.trim();
+    if (!key) { showToast('⚠️ No API key to copy'); return; }
+    await copyToClipboard(key, '🔑 API key copied');
+  });
+}
 
 /* ═══════════════════════════════════════════════════════════
    MODEL SELECTION
@@ -178,29 +208,45 @@ function updateOllamaPanel() {
 /* ═══════════════════════════════════════════════════════════
    SYSTEM CONTEXT
    ═══════════════════════════════════════════════════════════ */
-clearSystemCtxBtn.addEventListener('click', () => {
-  systemCtxTA.value = '';
-  systemCtxTA.focus();
-  showToast('🧹 System context cleared');
-});
+if (!clearSystemCtxBtn) {
+  console.warn('⚠️  Clear system context button not found');
+} else {
+  clearSystemCtxBtn.addEventListener('click', () => {
+    systemCtxTA.value = '';
+    systemCtxTA.focus();
+    showToast('🧹 System context cleared');
+  });
+}
 
-copySystemCtxBtn.addEventListener('click', async () => {
-  await copyToClipboard(systemCtxTA.value, '📋 System context copied');
-});
+if (!copySystemCtxBtn) {
+  console.warn('⚠️  Copy system context button not found');
+} else {
+  copySystemCtxBtn.addEventListener('click', async () => {
+    await copyToClipboard(systemCtxTA.value, '📋 System context copied');
+  });
+}
 
 /* ═══════════════════════════════════════════════════════════
    USER PROMPT + TOKEN COUNTER
    ═══════════════════════════════════════════════════════════ */
-clearUserPromptBtn.addEventListener('click', () => {
-  userPromptTA.value = '';
-  updateTokenCounter();
-  userPromptTA.focus();
-  showToast('🧹 Prompt cleared');
-});
+if (!clearUserPromptBtn) {
+  console.warn('⚠️  Clear user prompt button not found');
+} else {
+  clearUserPromptBtn.addEventListener('click', () => {
+    userPromptTA.value = '';
+    updateTokenCounter();
+    userPromptTA.focus();
+    showToast('🧹 Prompt cleared');
+  });
+}
 
-copyUserPromptBtn.addEventListener('click', async () => {
-  await copyToClipboard(userPromptTA.value, '📋 Prompt copied');
-});
+if (!copyUserPromptBtn) {
+  console.warn('⚠️  Copy user prompt button not found');
+} else {
+  copyUserPromptBtn.addEventListener('click', async () => {
+    await copyToClipboard(userPromptTA.value, '📋 Prompt copied');
+  });
+}
 
 userPromptTA.addEventListener('input', updateTokenCounter);
 
@@ -215,15 +261,31 @@ function updateTokenCounter() {
 /* ═══════════════════════════════════════════════════════════
    SEND / MAIN ACTION
    ═══════════════════════════════════════════════════════════ */
-sendBtn.addEventListener('click', handleSend);
 
-// Ctrl+Enter / Cmd+Enter shortcut in the user prompt
-userPromptTA.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+// Verify DOM elements exist before attaching listeners
+if (!sendBtn) {
+  console.error('❌ SEND button not found in DOM. Check id="sendBtn" exists in HTML.');
+} else {
+  sendBtn.addEventListener('click', (e) => {
     e.preventDefault();
+    e.stopPropagation();
     handleSend();
-  }
-});
+  });
+  console.log('✅ SEND button event listener attached');
+}
+
+if (!userPromptTA) {
+  console.error('❌ User prompt textarea not found. Check id="userPrompt" exists.');
+} else {
+  // Ctrl+Enter / Cmd+Enter shortcut in the user prompt
+  userPromptTA.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      handleSend();
+    }
+  });
+}
 
 async function handleSend() {
   if (isBusy) {
@@ -371,39 +433,54 @@ function streamTextEffect(fullText) {
    ═══════════════════════════════════════════════════════════ */
 
 /* Toggle editable */
-editResponseBtn.addEventListener('click', () => {
-  isResponseEditable = !isResponseEditable;
-  modelResponseTA.readOnly = !isResponseEditable;
-  modelResponseTA.classList.toggle('editable', isResponseEditable);
-  editResponseBtn.textContent = isResponseEditable ? '🔒 Lock' : 'Edit';
-  if (isResponseEditable) modelResponseTA.focus();
-  showToast(isResponseEditable ? '✏️ Response is now editable' : '🔒 Response locked');
-});
+if (!editResponseBtn) {
+  console.warn('⚠️  Edit response button not found');
+} else {
+  editResponseBtn.addEventListener('click', () => {
+    isResponseEditable = !isResponseEditable;
+    modelResponseTA.readOnly = !isResponseEditable;
+    modelResponseTA.classList.toggle('editable', isResponseEditable);
+    editResponseBtn.textContent = isResponseEditable ? '🔒 Lock' : 'Edit';
+    if (isResponseEditable) modelResponseTA.focus();
+    showToast(isResponseEditable ? '✏️ Response is now editable' : '🔒 Response locked');
+  });
+}
 
 /* Copy response */
-copyResponseBtn.addEventListener('click', async () => {
-  const text = modelResponseTA.value.trim();
-  if (!text) { showToast('⚠️ Nothing to copy'); return; }
-  await copyToClipboard(text, '📋 Response copied');
-});
+if (!copyResponseBtn) {
+  console.warn('⚠️  Copy response button not found');
+} else {
+  copyResponseBtn.addEventListener('click', async () => {
+    const text = modelResponseTA.value.trim();
+    if (!text) { showToast('⚠️ Nothing to copy'); return; }
+    await copyToClipboard(text, '📋 Response copied');
+  });
+}
 
 /* Download as .txt */
-downloadTxtBtn.addEventListener('click', () => {
-  const text = modelResponseTA.value.trim();
-  if (!text) { showToast('⚠️ Nothing to download'); return; }
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  triggerDownload(blob, `TutorAgent_Response_${dateStamp()}.txt`);
-  showToast('⬇️ TXT downloaded');
-});
+if (!downloadTxtBtn) {
+  console.warn('⚠️  Download TXT button not found');
+} else {
+  downloadTxtBtn.addEventListener('click', () => {
+    const text = modelResponseTA.value.trim();
+    if (!text) { showToast('⚠️ Nothing to download'); return; }
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    triggerDownload(blob, `TutorAgent_Response_${dateStamp()}.txt`);
+    showToast('⬇️ TXT downloaded');
+  });
+}
 
 /* Export as PDF via jsPDF */
-downloadPdfBtn.addEventListener('click', () => {
-  const text = modelResponseTA.value.trim();
-  if (!text) { showToast('⚠️ Nothing to export'); return; }
+if (!downloadPdfBtn) {
+  console.warn('⚠️  Download PDF button not found');
+} else {
+  downloadPdfBtn.addEventListener('click', () => {
+    const text = modelResponseTA.value.trim();
+    if (!text) { showToast('⚠️ Nothing to export'); return; }
 
-  try {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
     // Header
     doc.setFillColor(13, 21, 37);
@@ -496,7 +573,8 @@ downloadPdfBtn.addEventListener('click', () => {
     console.error('PDF export error:', err);
     showToast('❌ PDF export failed: ' + err.message, 4000);
   }
-});
+  });
+}
 
 /* ═══════════════════════════════════════════════════════════
    UI HELPERS
