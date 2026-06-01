@@ -14,7 +14,7 @@ venv/
 .DS_Store
 
 # Node
-node_modules
+node_modules/
 package-lock.json
 
 # ------------------------------------------------------------------------

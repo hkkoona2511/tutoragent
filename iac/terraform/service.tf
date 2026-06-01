@@ -1,7 +1,7 @@
 resource "aws_ecs_service" "tutoragent_service" {
   name              = "tutoragent-service"
   cluster           = aws_ecs_cluster.ecs-cluster-one.id
-  task_definition   = aws_ecs_task_definition.taskone.arn
+  task_definition   = aws_ecs_task_definition.taskdefone.arn
   launch_type       = "FARGATE"
   scheduling_strategy = "REPLICA"
   desired_count     = 1

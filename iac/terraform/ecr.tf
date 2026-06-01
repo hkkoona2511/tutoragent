@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "tutoragent" {
-  name = "tutoragent"
+  name = var.app_name  
   tags = {
-    Name="tutoragent"
+    Name=var.app_name
   }
 }

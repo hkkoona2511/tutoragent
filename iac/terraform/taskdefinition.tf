@@ -1,5 +1,5 @@
-resource "aws_ecs_task_definition" "taskone" {
-  family                    = "taskone"
+resource "aws_ecs_task_definition" "taskdefone" {
+  family                    = "taskdefone"
   container_definitions     = <<DEFINITION
 [
   {
