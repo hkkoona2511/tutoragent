@@ -17,5 +17,4 @@ jobs:
           terraform_version: 1.15.5
       - name: Terraform Init & Plan
         run: | 
-          terraform init
-          terraform plan -out=tfplan-output.json
+          terraform init && sleep 15 && terraform plan -out=tfplan-output.json
