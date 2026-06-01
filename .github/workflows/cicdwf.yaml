@@ -9,7 +9,7 @@ jobs:
     uses: ./.github/workflows/iac.yaml
   build-and-deploy:
     needs: run-iacdeploy
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
