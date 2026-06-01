@@ -16,5 +16,6 @@ jobs:
         with:
           terraform_version: 1.15.5
       - name: Terraform Init & Plan
+        working-directory: ./iac/terraform
         run: | 
           terraform init && sleep 15 && terraform plan -out=tfplan-output.json
