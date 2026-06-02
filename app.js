@@ -12,6 +12,7 @@ const $ = id => document.getElementById(id);
 const groqApiKeyInput    = $('groqApiKey');
 const toggleKeyBtn       = $('toggleKeyVisibility');
 const copyApiKeyBtn      = $('copyApiKey');
+const clearApiKeyBtn     = $('clearApiKey');
 const eyeIcon            = $('eyeIcon');
 
 const modelRadios        = document.querySelectorAll('input[name="model"]');
@@ -83,7 +84,11 @@ const MODEL_LABELS = {
 (function init() {
   // Restore API key from sessionStorage (not localStorage for security)
   const savedKey = sessionStorage.getItem('tutor_groq_key');
-  if (savedKey) groqApiKeyInput.value = savedKey;
+  if (savedKey && groqApiKeyInput) {
+    groqApiKeyInput.value = savedKey;
+  } else if (!groqApiKeyInput) {
+    console.warn('⚠️  GROQ API key input not found during initialization');
+  }
 
   // Restore last selected model
   const savedModel = localStorage.getItem('tutor_model');
@@ -114,10 +119,16 @@ const MODEL_LABELS = {
    ══════════════════════════════════════════════════════════ */
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  // Update aria label
-  themeToggleBtn.setAttribute('aria-label',
-    theme === 'light' ? 'Switch to Dark theme' : 'Switch to Light theme'
-  );
+  
+  // Update aria label with null check
+  if (themeToggleBtn) {
+    themeToggleBtn.setAttribute('aria-label',
+      theme === 'light' ? 'Switch to Dark theme' : 'Switch to Light theme'
+    );
+    console.log(`✅ Theme applied: ${theme}`);
+  } else {
+    console.warn('⚠️  Theme toggle button not found when applying theme');
+  }
 }
 
 // Attach theme toggle listener with null check
@@ -137,8 +148,17 @@ if (!themeToggleBtn) {
    STATUS HELPERS
    ══════════════════════════════════════════════════════════ */
 function setStatus(state, label) {
+  if (!statusDot) {
+    console.error('❌ Status dot element not found in DOM');
+    return;
+  }
+  if (!statusLabel) {
+    console.error('❌ Status label element not found in DOM');
+    return;
+  }
   statusDot.className   = `status-dot ${state}`;
   statusLabel.textContent = label;
+  console.log(`✅ Status updated to: ${label}`);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -157,6 +177,10 @@ function showToast(msg, duration = 2600) {
    ═══════════════════════════════════════════════════════════ */
 if (!toggleKeyBtn) {
   console.warn('⚠️  Toggle key visibility button not found');
+} else if (!groqApiKeyInput) {
+  console.warn('⚠️  GROQ API key input not found');
+} else if (!eyeIcon) {
+  console.warn('⚠️  Eye icon element not found');
 } else {
   toggleKeyBtn.addEventListener('click', () => {
     const isHidden = groqApiKeyInput.type === 'password';
@@ -167,10 +191,13 @@ if (!toggleKeyBtn) {
       : /* eye */
         `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
     showToast(isHidden ? '🔓 Key visible' : '🔒 Key hidden');
+    console.log(`✅ API key visibility toggled: ${isHidden ? 'showing' : 'hiding'}`);
   });
 }
 
-if (groqApiKeyInput) {
+if (!groqApiKeyInput) {
+  console.warn('⚠️  GROQ API key input not found for save operation');
+} else {
   groqApiKeyInput.addEventListener('input', () => {
     sessionStorage.setItem('tutor_groq_key', groqApiKeyInput.value.trim());
   });
@@ -178,11 +205,33 @@ if (groqApiKeyInput) {
 
 if (!copyApiKeyBtn) {
   console.warn('⚠️  Copy API key button not found');
+} else if (!groqApiKeyInput) {
+  console.warn('⚠️  GROQ API key input not found for copy operation');
 } else {
   copyApiKeyBtn.addEventListener('click', async () => {
     const key = groqApiKeyInput.value.trim();
     if (!key) { showToast('⚠️ No API key to copy'); return; }
     await copyToClipboard(key, '🔑 API key copied');
+    console.log('✅ API key copied to clipboard');
+  });
+}
+
+if (!clearApiKeyBtn) {
+  console.warn('⚠️  Clear API key button not found');
+} else if (!groqApiKeyInput) {
+  console.warn('⚠️  GROQ API key input not found for clear operation');
+} else {
+  clearApiKeyBtn.addEventListener('click', () => {
+    const hadKey = groqApiKeyInput.value.trim().length > 0;
+    groqApiKeyInput.value = '';
+    sessionStorage.removeItem('tutor_groq_key');
+    groqApiKeyInput.focus();
+    if (hadKey) {
+      showToast('🗑️ API key cleared');
+      console.log('✅ API key cleared from input and sessionStorage');
+    } else {
+      showToast('⚠️ API key was already empty');
+    }
   });
 }
 
@@ -288,6 +337,28 @@ if (!userPromptTA) {
 }
 
 async function handleSend() {
+  // Verify all required DOM elements exist
+  if (!userPromptTA) {
+    console.error('❌ User prompt textarea not found when sending');
+    showToast('❌ User prompt field not available');
+    return;
+  }
+  if (!groqApiKeyInput) {
+    console.error('❌ GROQ API key input not found when sending');
+    showToast('❌ API key field not available');
+    return;
+  }
+  if (!systemCtxTA) {
+    console.error('❌ System context textarea not found when sending');
+    showToast('❌ System context field not available');
+    return;
+  }
+  if (!modelResponseTA) {
+    console.error('❌ Model response textarea not found when sending');
+    showToast('❌ Response field not available');
+    return;
+  }
+  
   if (isBusy) {
     // Second click = abort
     abortCtrl?.abort();
@@ -330,6 +401,7 @@ async function handleSend() {
     showResponseMeta(model, elapsed);
     setStatus('ready', 'Done');
     showToast(`✅ Response received in ${elapsed}s`);
+    console.log('✅ SEND operation completed successfully');
   } catch (err) {
     if (err.name === 'AbortError') {
       modelResponseTA.value += '\n\n[Stopped by user]';
@@ -340,6 +412,7 @@ async function handleSend() {
       modelResponseTA.value = `❌ Error: ${msg}`;
       setStatus('error', 'Error');
       showToast(`❌ ${msg}`, 4000);
+      console.error('❌ SEND operation failed:', err);
     }
   } finally {
     setBusy(false);
@@ -406,6 +479,11 @@ async function callOllama(systemCtx, userPrompt) {
    STREAMING TEXT EFFECT (visual typewriter)
    ═══════════════════════════════════════════════════════════ */
 function streamTextEffect(fullText) {
+  if (!modelResponseTA) {
+    console.error('❌ Model response textarea not found for streaming effect');
+    return Promise.reject(new Error('Response textarea not available'));
+  }
+  
   return new Promise(resolve => {
     modelResponseTA.classList.add('typing-cursor');
     let i = 0;
@@ -414,6 +492,7 @@ function streamTextEffect(fullText) {
     function tick() {
       if (i >= fullText.length) {
         modelResponseTA.classList.remove('typing-cursor');
+        console.log('✅ Stream effect completed');
         resolve();
         return;
       }
@@ -582,25 +661,68 @@ if (!downloadPdfBtn) {
 
 function setBusy(busy) {
   isBusy = busy;
+  
+  if (!sendBtn) {
+    console.error('❌ SEND button not found when setting busy state');
+    return;
+  }
+  if (!sendBtnLabel) {
+    console.error('❌ SEND button label not found');
+    return;
+  }
+  if (!sendSpinner) {
+    console.error('❌ SEND spinner element not found');
+    return;
+  }
+  
   sendBtn.disabled = false;  // always clickable (second click = abort)
   sendBtnLabel.textContent = busy ? 'Stop ◼' : 'Send ✦';
   sendSpinner.hidden = !busy;
   if (!busy) clearTimeout(streamTimeout);
+  console.log(`✅ UI state updated: ${busy ? 'busy' : 'ready'}`);
 }
 
 function clearResponse() {
+  if (!modelResponseTA) {
+    console.warn('⚠️  Model response textarea not found');
+    return;
+  }
+  if (!editResponseBtn) {
+    console.warn('⚠️  Edit response button not found');
+    return;
+  }
+  if (!responseMeta) {
+    console.warn('⚠️  Response meta element not found');
+    return;
+  }
+  
   modelResponseTA.value = '';
   modelResponseTA.classList.remove('typing-cursor', 'editable');
   modelResponseTA.readOnly = true;
   isResponseEditable = false;
   editResponseBtn.textContent = 'Edit';
   responseMeta.hidden = true;
+  console.log('✅ Response cleared');
 }
 
 function showResponseMeta(model, elapsed) {
+  if (!responseModelTag) {
+    console.warn('⚠️  Response model tag not found');
+    return;
+  }
+  if (!responseTime) {
+    console.warn('⚠️  Response time element not found');
+    return;
+  }
+  if (!responseMeta) {
+    console.warn('⚠️  Response meta element not found');
+    return;
+  }
+  
   responseModelTag.textContent = MODEL_LABELS[model] ?? model;
   responseTime.textContent     = `⏱ ${elapsed}s`;
   responseMeta.hidden = false;
+  console.log(`✅ Response metadata displayed: ${model} in ${elapsed}s`);
 }
 
 function extractErrorMessage(err) {

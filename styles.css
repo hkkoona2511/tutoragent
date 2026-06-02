@@ -264,16 +264,19 @@ a:hover { text-decoration: underline; }
 .theme-icon {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
   transition: opacity var(--t-fast), transform var(--t-fast);
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
-.theme-icon--dark  { opacity: 1;  transform: rotate(0deg) scale(1); }
-.theme-icon--light { opacity: 0;  transform: rotate(30deg) scale(0.7); }
+.theme-icon--dark  { opacity: 1;  transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+.theme-icon--light { opacity: 0;  transform: translate(-50%, -50%) rotate(30deg) scale(0.7); }
 
 /* Wrapper to overlay both icons */
-.theme-toggle-btn .theme-icon {
-  position: relative;
-}
 .theme-toggle-btn {
   position: relative;
 }
