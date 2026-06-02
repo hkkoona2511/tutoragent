@@ -25,3 +25,7 @@ jobs:
         working-directory: ./iac/terraform
         run: | 
           terraform init && sleep 15 && terraform plan -out=tfplan-output.json
+      - name: Terraform output ECS TASK Definition
+        working-directory: ./iac/terraform
+        run: | 
+          terraform output -raw ecs_task_definition_json > tutoragent-task-definition.json
