@@ -55,7 +55,7 @@ Before you start asking questions, you need to configure your model.
     *   Your API key is only used locally in your browser and is not stored on any server.
 
 *   **Model Selection**
-    *   **☁️ GROQ Cloud**: Select from various high-performance models like Llama 3.3, DeepSeek R1, or Mixtral. These require a GROQ API Key.
+    *   **☁️ GROQ Cloud**: Select from high-performance models like Llama 4 Scout and Llama 3.3 70B. These require a GROQ API Key.
     *   **🏠 Local (Ollama)**: Choose this option if you want to run models locally on your machine.
         *   You must have [Ollama](https://ollama.com/) installed and running locally.
         *   Specify the **Ollama Model Name** (e.g., `llama3`) and the **Host URL** (defaults to `http://localhost:11434`).
