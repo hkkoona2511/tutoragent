@@ -111,11 +111,6 @@
                       <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                     </svg>
                   </button>
-                  <button id="clearApiKey" class="icon-btn" title="Clear API Key" aria-label="Clear API key">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="3 6 5 4 21 4 23 6 23 20a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/><line x1="8" y1="4" x2="16" y2="4"/>
-                    </svg>
-                  </button>
                 </div>
               </div>
               <p class="hint-text">Paste your GROQ key from <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a></p>
@@ -124,7 +119,7 @@
 
           <div class="divider"></div>
 
-          <!-- Model Selection -->
+          <!-- Section 2: Model Selection -->
           <section class="config-section" aria-labelledby="modelHeading">
             <div class="section-header">
               <span class="section-icon" aria-hidden="true">🤖</span>
@@ -132,43 +127,36 @@
             </div>
 
             <div class="model-group" id="modelGroup" role="radiogroup" aria-labelledby="modelHeading">
+
               <!-- GROQ Models -->
               <div class="model-category-label">☁️ GROQ Cloud</div>
 
-              <!-- Llama 4 Scout (stand‑alone) -->
               <label class="model-radio-card" for="modelLlama4Scout">
-                <input type="radio" id="modelLlama4Scout"
-                       name="model"
-                       value="meta-llama/llama-4-scout-17b-16e-instruct"
-                       checked />
+                <input type="radio" id="modelLlama4Scout" name="model" value="meta-llama/llama-4-scout-17b-16e-instruct" />
                 <div class="radio-card-body">
                   <div class="radio-indicator"></div>
                   <div class="model-info">
                     <span class="model-name">Llama 4 Scout</span>
+                    <span class="model-tag">17B · 16E · Fast</span>
                   </div>
+                  <span class="model-badge badge-groq">GROQ</span>
                 </div>
               </label>
 
-              <!-- Local Ollama (stand‑alone) -->
-              <label class="model-radio-card" for="modelLocalOllama">
-                <input type="radio" id="modelLocalOllama"
-                       name="model"
-                       value="ollama" />
+              <label class="model-radio-card" for="modelLlama4Maverick">
+                <input type="radio" id="modelLlama4Maverick" name="model" value="meta-llama/llama-4-maverick-17b-128e-instruct" />
                 <div class="radio-card-body">
                   <div class="radio-indicator"></div>
                   <div class="model-info">
-                    <span class="model-name">Local (Ollama)</span>
-                    <span class="model-tag">Local</span>
+                    <span class="model-name">Llama 4 Maverick</span>
+                    <span class="model-tag">17B · 128E · Powerful</span>
                   </div>
-                  <span class="model-badge badge-ollama">Ollama</span>
+                  <span class="model-badge badge-groq">GROQ</span>
                 </div>
               </label>
 
-              <!-- Llama 3.3 70B (default GROQ) -->
               <label class="model-radio-card" for="modelLlama370b">
-                <input type="radio" id="modelLlama370b"
-                       name="model"
-                       value="llama-3.3-70b-versatile" />
+                <input type="radio" id="modelLlama370b" name="model" value="llama-3.3-70b-versatile" checked />
                 <div class="radio-card-body">
                   <div class="radio-indicator"></div>
                   <div class="model-info">
@@ -179,7 +167,100 @@
                 </div>
               </label>
 
+              <label class="model-radio-card" for="modelLlama38b">
+                <input type="radio" id="modelLlama38b" name="model" value="llama3-8b-8192" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Llama 3 8B</span>
+                    <span class="model-tag">8192 ctx · Lightweight</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
 
+              <label class="model-radio-card" for="modelMixtral">
+                <input type="radio" id="modelMixtral" name="model" value="mixtral-8x7b-32768" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Mixtral 8×7B</span>
+                    <span class="model-tag">32768 ctx · MoE</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelGemma2">
+                <input type="radio" id="modelGemma2" name="model" value="gemma2-9b-it" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Gemma 2 9B</span>
+                    <span class="model-tag">Instruction Tuned</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelDeepSeek">
+                <input type="radio" id="modelDeepSeek" name="model" value="deepseek-r1-distill-llama-70b" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">DeepSeek R1</span>
+                    <span class="model-tag">70B Distill · Reasoning</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <label class="model-radio-card" for="modelQwen">
+                <input type="radio" id="modelQwen" name="model" value="qwen-qwq-32b" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Qwen QwQ 32B</span>
+                    <span class="model-tag">Reasoning · Chain-of-Thought</span>
+                  </div>
+                  <span class="model-badge badge-groq">GROQ</span>
+                </div>
+              </label>
+
+              <!-- Local Ollama -->
+              <div class="model-category-label">🏠 Local</div>
+
+              <label class="model-radio-card model-radio-card--local" for="modelOllama">
+                <input type="radio" id="modelOllama" name="model" value="ollama" />
+                <div class="radio-card-body">
+                  <div class="radio-indicator"></div>
+                  <div class="model-info">
+                    <span class="model-name">Ollama (LOCAL)</span>
+                    <span class="model-tag">localhost:11434</span>
+                  </div>
+                  <span class="model-badge badge-local">LOCAL</span>
+                </div>
+              </label>
+
+              <!-- Ollama sub-options (shown when Ollama is selected) -->
+              <div class="ollama-sub-panel" id="ollamaSubPanel">
+                <label class="sub-label" for="ollamaModel">Ollama Model Name</label>
+                <input
+                  type="text"
+                  id="ollamaModel"
+                  class="text-input mono"
+                  placeholder="llama3, mistral, phi3…"
+                  value="llama3"
+                  aria-label="Ollama model name"
+                />
+                <label class="sub-label" for="ollamaHost">Host URL</label>
+                <input
+                  type="text"
+                  id="ollamaHost"
+                  class="text-input mono"
+                  value="http://localhost:11434"
+                  aria-label="Ollama host URL"
+                />
               </div>
 
             </div>
