@@ -12,6 +12,7 @@ const $ = id => document.getElementById(id);
 const groqApiKeyInput    = $('groqApiKey');
 const toggleKeyBtn       = $('toggleKeyVisibility');
 const copyApiKeyBtn      = $('copyApiKey');
+const clearApiKeyBtn     = $('clearApiKey');
 const eyeIcon            = $('eyeIcon');
 
 const modelRadios        = document.querySelectorAll('input[name="model"]');
@@ -148,6 +149,14 @@ copyApiKeyBtn.addEventListener('click', async () => {
   const key = groqApiKeyInput.value.trim();
   if (!key) { showToast('⚠️ No API key to copy'); return; }
   await copyToClipboard(key, '🔑 API key copied');
+});
+
+clearApiKeyBtn.addEventListener('click', () => {
+  if (!groqApiKeyInput.value) { showToast('⚠️ API key is already empty'); return; }
+  groqApiKeyInput.value = '';
+  sessionStorage.removeItem('tutor_groq_key');
+  groqApiKeyInput.focus();
+  showToast('🧹 API key cleared');
 });
 
 /* ═══════════════════════════════════════════════════════════
