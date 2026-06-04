@@ -30,6 +30,8 @@ jobs:
           terraform import aws_ecr_repository.tutoragent_ecr_repository tutoragent_ecr_repository || true
           terraform import aws_iam_role.ecsTaskExecutionRole ecsTaskExecutionRole || true
           terraform import aws_iam_role_policy_attachment.ecsTaskExecutionRole_policy ecsTaskExecutionRole/arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy || true
+          terraform import aws_ecs_cluster.ecs-cluster-one ecs-cluster-one || true
+          terraform import aws_ecs_service.tutoragent-service ecs-cluster-one/tutoragent-service || true
           sleep 15
           terraform plan -out=tfplan-output.json
       
