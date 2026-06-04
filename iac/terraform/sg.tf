@@ -22,4 +22,11 @@ resource "aws_security_group" "tutoragent-sg" {
   tags = {
     Name = "tutoragent-sg"
   }
+
+  lifecycle {
+    ignore_changes = [
+      description,
+      name
+    ]
+  }
 }
