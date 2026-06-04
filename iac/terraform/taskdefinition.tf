@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "tutoragent" {
-  family                    = "tutoragent"
-  container_definitions     = <<DEFINITION
+  family                   = "tutoragent"
+  container_definitions    = <<DEFINITION
 [
   {
     "name": "tutoragent",
@@ -18,9 +18,9 @@ resource "aws_ecs_task_definition" "tutoragent" {
   }
 ]
   DEFINITION
-  requires_compatibilities  = ["FARGATE"]
-  network_mode              = "awsvpc"
-  memory                    = 1024
-  execution_role_arn        = aws_iam_role.ecsTaskExecutionRole.arn
-  cpu                       = 512
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  memory                   = 1024
+  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
+  cpu                      = 512
 }

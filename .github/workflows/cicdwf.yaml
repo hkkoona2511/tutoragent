@@ -47,7 +47,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tutoragent-task-definition.json
-          path: ./iac/terraform/  
+          path: ./iac/terraform/tutoragent-task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def

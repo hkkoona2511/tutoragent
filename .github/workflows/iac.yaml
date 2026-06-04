@@ -21,19 +21,23 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.15.5
+      
       - name: Terraform Init & Plan
         working-directory: ./iac/terraform
         run: | 
           terraform init && sleep 15 && terraform plan -out=tfplan-output.json
+      
       - name: Terraform output ECS TASK Definition
         working-directory: ./iac/terraform
         run: | 
           terraform output -raw ecs_task_definition_json > tutoragent-task-definition.json
+      
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: tutoragent-task-definition.json
-          path: ./iac/terraform/
+          path: ./iac/terraform/tutoragent-task-definition.json
+      
       # Format check to ensure standard style compliance 
       - name: Terraform Format Check
         working-directory: ./iac/terraform
