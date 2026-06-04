@@ -34,3 +34,17 @@ jobs:
         with:
           name: tutoragent-task-definition.json
           path: ./iac/terraform/
+      # Format check to ensure standard style compliance 
+      - name: Terraform Format Check
+        working-directory: ./iac/terraform
+        run: terraform fmt -check
+
+      # Validate the configuration code for structural syntax errors
+      - name: Terraform Validate
+        working-directory: ./iac/terraform
+        run: terraform validate
+
+      # Execute the changes automatically without interactive prompts
+      - name: Terraform Apply
+        working-directory: ./iac/terraform
+        run: terraform apply -auto-approve tfplan-output.json
