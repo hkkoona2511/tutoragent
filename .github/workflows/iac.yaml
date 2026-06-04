@@ -31,7 +31,9 @@ jobs:
           terraform import aws_iam_role.ecsTaskExecutionRole ecsTaskExecutionRole || true
           terraform import aws_iam_role_policy_attachment.ecsTaskExecutionRole_policy ecsTaskExecutionRole/arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy || true
           terraform import aws_ecs_cluster.ecs-cluster-one ecs-cluster-one || true
-          terraform import aws_ecs_service.tutoragent-service ecs-cluster-one/tutoragent-service || true
+          terraform import aws_ecs_service.tutoragent-service ecs-cluster-one/tutoragent-service || true  
+          terraform import aws_security_group.tutoragent-sg ecs-cluster-one/tutoragent-sg || true
+          terraform import aws_ecs_task_definition.tutoragent ecs-cluster-one/tutoragent || true
           sleep 15
           terraform plan -out=tfplan-output.json
       
