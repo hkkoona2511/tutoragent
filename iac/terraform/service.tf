@@ -7,7 +7,8 @@ resource "aws_ecs_service" "tutoragent-service" {
   desired_count       = 1
 
   network_configuration {
-    subnets          = [aws_default_subnet.ecs_az1.id]
+    subnets          = [aws_default_subnet.ecs_az1.id, aws_default_subnet.ecs_az2.id, aws_default_subnet.ecs_az3.id]
     assign_public_ip = true
+    security_groups  = [aws_security_group.tutoragent-sg.id]
   }
 }
