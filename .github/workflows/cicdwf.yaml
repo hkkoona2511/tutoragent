@@ -54,7 +54,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: tutoragent-task-definition.json
-          container-name: tutoragent
+          container-name: tutoragent-task
           image: ${{ steps.buildnPush.outputs.image }}    
 
       - name: Deploy a ECS Task Definition
