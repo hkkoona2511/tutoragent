@@ -1,9 +1,9 @@
-resource "aws_ecs_task_definition" "taskdefone" {
-  family                    = "taskdefone"
+resource "aws_ecs_task_definition" "tutoragent" {
+  family                    = "tutoragent"
   container_definitions     = <<DEFINITION
 [
   {
-    "name": "taskone",
+    "name": "tutoragent",
     "image": "${aws_ecr_repository.tutoragent.repository_url}",
     "essential": true,
     "portMappings": [
@@ -12,15 +12,15 @@ resource "aws_ecs_task_definition" "taskdefone" {
         "hostPort": 5500
       }
     ],
-    "memory": 512,
-    "cpu": 256,
+    "memory": 1024,
+    "cpu": 512,
     "networkMode": "awsvpc"
   }
 ]
   DEFINITION
   requires_compatibilities  = ["FARGATE"]
   network_mode              = "awsvpc"
-  memory                    = 512
+  memory                    = 1024
   execution_role_arn        = aws_iam_role.ecsTaskExecutionRole.arn
-  cpu                       = 256
+  cpu                       = 512
 }
