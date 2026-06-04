@@ -17,6 +17,7 @@ jobs:
     steps:
       - name: Source Code Checkout 
         uses: actions/checkout@v3
+      
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -25,7 +26,13 @@ jobs:
       - name: Terraform Init & Plan
         working-directory: ./iac/terraform
         run: | 
-          terraform init && sleep 15 && terraform plan -out=tfplan-output.json
+          terraform init
+          terraform import aws_ecr_repository.tutoragent_ecr_repository tutoragent_ecr_repository || true
+          terraform import aws_iam_role.ecsTaskExecutionRole ecsTaskExecutionRole || true
+          terraform import aws_ecs_service.tutoragent-service ecs-cluster-one/tutoragent-service || true
+          terraform import aws_iam_role_policy_attachment.ecsTaskExecutionRole_policy ecsTaskExecutionRole/arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy || true
+          sleep 15
+          terraform plan -out=tfplan-output.json
       
       # Format check to ensure standard style compliance 
       - name: Terraform Format Check
