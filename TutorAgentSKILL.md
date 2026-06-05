@@ -39,7 +39,7 @@ The core engine of the frontend. Key responsibilities include:
 *   **State Management**: Tracks `isBusy`, `isResponseEditable`, and holds the `AbortController` for cancelling requests.
 *   **DOM Binding**: Selects and caches DOM elements, attaching event listeners for UI interaction.
 *   **Network Layer**: Contains the `callGroq()` and `callOllama()` asynchronous functions that format messages and construct `fetch` requests.
-*   **UI Effects**: Implements a `streamTextEffect` which simulates a typewriter effect by chunking the full text response over `setTimeout` loops.
+*   **UI Effects**: Implements a `streamTextEffect` which simulates a typewriter effect by chunking the full text response over `setTimeout` loops. Also manages a custom toast notification system (`showToast()`) and Light/Dark theme toggling.
 *   **Export Utilities**: Uses the browser's `Blob` API to trigger `.txt` downloads and utilizes `jsPDF` to manually draw text, headers, and backgrounds onto a PDF canvas.
 
 ### 4.2. `index.html` (Application Shell)
@@ -61,6 +61,7 @@ The core engine of the frontend. Key responsibilities include:
 
 ### GROQ Cloud API (`https://api.groq.com/openai/v1/chat/completions`)
 *   **Auth**: Bearer token via the user-provided API key.
+*   **Supported Models**: Configured to use `meta-llama/llama-4-scout-17b-16e-instruct` and `llama-3.3-70b-versatile`.
 *   **Format**: OpenAI-compatible JSON payload (`model`, `messages`, `temperature`, `max_tokens`).
 *   **Handling**: Awaits the full response payload (streaming is set to `false` in the code, and simulated visually on the frontend).
 

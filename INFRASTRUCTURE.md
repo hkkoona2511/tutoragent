@@ -24,9 +24,10 @@ The deployment relies on the following core AWS services:
 - **Region**: Defaults to `ap-south-1` (Mumbai), configurable via the `aws_region` variable.
 - **Application Name**: Standardized as `tutoragent` via the `app_name` variable.
 
-### 2.2. Network (`vpc.tf`)
+### 2.2. Network (`vpc.tf`, `sg.tf`)
 - **VPC**: Uses the default AWS VPC, tagged as `ECS-VPC-ONE`.
 - **Subnets**: Relies on default subnets across three availability zones (`ap-south-1a`, `ap-south-1b`, `ap-south-1c`) to ensure high availability. 
+- **Security Group**: The `tutoragent-sg` allows inbound TCP traffic on port 5500 and all outbound traffic.
 
 ### 2.3. IAM Roles (`iam.tf`)
 - **ECS Task Execution Role (`ecsTaskExecutionRole`)**: An IAM role specifically created to allow the ECS service to pull container images from ECR and execute tasks securely. It uses the `sts:AssumeRole` policy for the `ecs-tasks.amazonaws.com` service principal.
@@ -36,15 +37,15 @@ The deployment relies on the following core AWS services:
 
 ### 2.5. Compute & Orchestration (`ecs.tf`, `taskdefinition.tf`, `service.tf`)
 - **Cluster**: An ECS cluster named `ecs-cluster-one` is provisioned as the logical grouping for the tasks.
-- **Task Definition (`taskdefone`)**:
+- **Task Definition (`tutoragent-task`)**:
   - **Launch Type**: Fargate (`requires_compatibilities = ["FARGATE"]`).
-  - **Resources**: Ultra-lightweight resource allocation with 0.25 vCPU (`cpu = 256`) and 0.5 GB RAM (`memory = 512`).
+  - **Resources**: Lightweight resource allocation with 0.5 vCPU (`cpu = 512`) and 1.0 GB RAM (`memory = 1024`).
   - **Network Mode**: `awsvpc` (required for Fargate).
   - **Container Setup**: Pulls the `tutoragent` image from the provisioned ECR repository and exposes port `5500` (container and host).
-- **Service (`tutoragent_service`)**:
+- **Service (`tutoragent-service`)**:
   - Runs exactly 1 replica (`desired_count = 1`) of the task definition.
-  - Deployed specifically into the `ecs_az1` subnet.
-  - **Security**: The container does not have a public IP assigned (`assign_public_ip = false`), indicating that external access would need to be routed via a Load Balancer or API Gateway (not currently provisioned in these base scripts).
+  - Deployed across multiple subnets (`ecs_az1`, `ecs_az2`, `ecs_az3`) for high availability.
+  - **Security**: The container has a public IP assigned (`assign_public_ip = true`) and is attached to the `tutoragent-sg` Security Group.
 
 ### 2.6. Outputs (`output.tf`)
 Upon a successful `terraform apply`, the module outputs:

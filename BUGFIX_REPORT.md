@@ -1,5 +1,9 @@
 # TutorAgent — SEND Button Fix Report
 
+> [!WARNING]
+> **Status: Fix Not Present / Reverted**
+> The fixes described in this report (comprehensive NULL checks, DOM element verification, console logging) are currently **missing** from `app.js`. It appears the code was either reverted or the proposed fix was never merged into the current working file.
+
 ## Issue Summary
 The SEND button in the User Prompt web UI was not responding to clicks.
 

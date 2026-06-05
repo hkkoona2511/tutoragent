@@ -56,18 +56,16 @@ This is the primary workflow that handles the actual application deployment. It 
 
 ---
 
-## 4. Pipeline Analysis & Critical Recommendations
+## 4. Pipeline Improvements Implemented
 
-Upon analyzing the source files, there are a few architectural gaps in the current implementation that will cause the deployment pipeline to fail. It is highly recommended to address these issues:
+Previous architectural gaps in the pipeline have been resolved:
 
-### 4.1. Missing Artifact Sharing
-- **Issue**: The `iac.yaml` workflow generates the `tutoragent-task-definition.json` file. However, because GitHub Actions jobs run on separate, isolated runners, this file is destroyed when the `run-iacdeploy` job finishes. The `build-and-deploy` job attempts to read this file in Step 5, which will result in a "File not found" error.
-- **Fix**: Use `actions/upload-artifact` at the end of `iac.yaml` to upload the JSON file, and `actions/download-artifact` at the beginning of the `build-and-deploy` job to retrieve it.
+### 4.1. Artifact Sharing Added
+- The `iac.yaml` workflow now uses `actions/upload-artifact@v4` to upload the `tutoragent-task-definition.json` file.
+- The `build-and-deploy` job in `cicdwf.yaml` uses `actions/download-artifact@v4` to successfully retrieve it across job boundaries.
 
-### 4.2. Container Name Mismatch
-- **Issue**: In `cicdwf.yaml` Step 5, the action attempts to update a container named `tutoragent` (`container-name: tutoragent`). However, in `iac/terraform/taskdefinition.tf`, the container is named `taskone`. 
-- **Fix**: Update `cicdwf.yaml` to match the Terraform configuration: `container-name: taskone`.
+### 4.2. Container Name Mismatch Resolved
+- The container name is now correctly aligned as `tutoragent-task` in both `cicdwf.yaml` and the `taskdefinition.tf` Terraform configuration.
 
-### 4.3. Missing `terraform apply`
-- **Issue**: The `iac.yaml` workflow executes `terraform plan`, but never executes `terraform apply`. If developers add new infrastructure to the Terraform files, the CI/CD pipeline will not actually provision the new resources on AWS.
-- **Fix**: Add a `terraform apply -auto-approve tfplan-output.json` step in `iac.yaml` (or create a dedicated branch/environment strategy for applying infrastructure).
+### 4.3. `terraform apply` Included
+- The `iac.yaml` workflow now properly executes `terraform apply -auto-approve tfplan-output.json` to automatically provision new infrastructure upon code merge.
