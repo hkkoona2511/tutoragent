@@ -35,9 +35,8 @@ jobs:
           SG_ID=$(aws ec2 describe-security-groups --region ap-south-1 --filters Name=group-name,Values=tutoragent-sg --query "SecurityGroups[0].GroupId" --output text)
           if [ "$SG_ID" != "None" ] && [ -n "$SG_ID" ]; then 
             terraform import aws_security_group.tutoragent-sg $SG_ID || true
-            terraform untaint aws_security_group.tutoragent-sg || true
           fi
-          terraform import aws_ecs_task_definition.tutoragent-task-definition tutoragent-task || true
+          terraform import aws_ecs_task_definition.tutoragent-task tutoragent-task || true
           sleep 15
           terraform plan -out=tfplan-output.json
       
