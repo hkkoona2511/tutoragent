@@ -7,15 +7,15 @@
 'use strict';
 
 const { JSDOM } = require('jsdom');
-const assert    = require('assert');
-const fs        = require('fs');
-const path      = require('path');
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 
 /* ── Paths ──────────────────────────────────────────────────── */
 const HTML_PATH = path.resolve(__dirname, '..', 'index.html');
-const JS_PATH   = path.resolve(__dirname, '..', 'app.js');
+const JS_PATH = path.resolve(__dirname, '..', 'app.js');
 const htmlSource = fs.readFileSync(HTML_PATH, 'utf-8');
-const jsSource   = fs.readFileSync(JS_PATH,   'utf-8');
+const jsSource = fs.readFileSync(JS_PATH, 'utf-8');
 
 /* ── Helper: spin up a fresh DOM + app.js for each test ────── */
 function createApp() {
@@ -23,10 +23,14 @@ function createApp() {
     url: 'http://localhost',
     runScripts: 'dangerously',
     pretendToBeVisual: true,
-    resources: 'usable',
+
     beforeParse(window) {
       // Stub APIs not available in jsdom
-      window.performance = { now: () => Date.now() };
+      Object.defineProperty(window, 'performance', {
+        value: { now: () => Date.now() },
+        writable: true,
+        configurable: true
+      });
       window.navigator.clipboard = {
         writeText: async (text) => { window.__clipboardContent = text; },
       };
@@ -34,35 +38,35 @@ function createApp() {
       window.jspdf = {
         jsPDF: class {
           constructor() { this._pages = 1; this._saved = null; }
-          setFillColor() {}
-          rect() {}
-          setFont() {}
-          setFontSize() {}
-          setTextColor() {}
-          text() {}
-          setDrawColor() {}
-          setLineWidth() {}
-          line() {}
+          setFillColor() { }
+          rect() { }
+          setFont() { }
+          setFontSize() { }
+          setTextColor() { }
+          text() { }
+          setDrawColor() { }
+          setLineWidth() { }
+          line() { }
           splitTextToSize(t) { return t.split('\n'); }
           addPage() { this._pages++; }
-          setPage() {}
+          setPage() { }
           save(name) { this._saved = name; window.__pdfSaved = name; }
           get internal() { return { getNumberOfPages: () => this._pages }; }
         }
       };
       // Stub URL.createObjectURL / revokeObjectURL
       window.URL.createObjectURL = () => 'blob:mock';
-      window.URL.revokeObjectURL = () => {};
+      window.URL.revokeObjectURL = () => { };
       // Stub sessionStorage / localStorage
       const store = {};
       const mockStorage = {
-        getItem:    (k) => store[k] ?? null,
-        setItem:    (k, v) => { store[k] = String(v); },
+        getItem: (k) => store[k] ?? null,
+        setItem: (k, v) => { store[k] = String(v); },
         removeItem: (k) => { delete store[k]; },
-        clear:      () => { Object.keys(store).forEach(k => delete store[k]); },
+        clear: () => { Object.keys(store).forEach(k => delete store[k]); },
       };
       Object.defineProperty(window, 'sessionStorage', { value: mockStorage });
-      Object.defineProperty(window, 'localStorage',   { value: mockStorage });
+      Object.defineProperty(window, 'localStorage', { value: mockStorage });
     },
   });
 
@@ -119,7 +123,7 @@ describe('1 ▸ Status Indicator', () => {
   it('1.3 — setStatus("busy", "Thinking…") should update dot + label', () => {
     // Call internal setStatus via eval in the DOM context
     win.eval('setStatus("busy", "Thinking…")');
-    const dot   = doc.getElementById('statusDot');
+    const dot = doc.getElementById('statusDot');
     const label = doc.getElementById('statusLabel');
     assert.ok(dot.classList.contains('busy'));
     assert.strictEqual(label.textContent, 'Thinking…');
@@ -127,7 +131,7 @@ describe('1 ▸ Status Indicator', () => {
 
   it('1.4 — setStatus("error", "Error") should update dot + label', () => {
     win.eval('setStatus("error", "Error")');
-    const dot   = doc.getElementById('statusDot');
+    const dot = doc.getElementById('statusDot');
     const label = doc.getElementById('statusLabel');
     assert.ok(dot.classList.contains('error'));
     assert.strictEqual(label.textContent, 'Error');
@@ -199,7 +203,7 @@ describe('2 ▸ Theme Toggle', () => {
   });
 
   it('2.8 — moon and sun icon elements should exist', () => {
-    assert.ok(doc.getElementById('themeIconDark'),  'Moon icon missing');
+    assert.ok(doc.getElementById('themeIconDark'), 'Moon icon missing');
     assert.ok(doc.getElementById('themeIconLight'), 'Sun icon missing');
   });
 });
@@ -379,7 +383,7 @@ describe('4 ▸ Model Selection', () => {
 
   it('4.9 — Ollama sub-panel should have model name and host URL inputs', () => {
     assert.ok(doc.getElementById('ollamaModel'), 'ollamaModel input missing');
-    assert.ok(doc.getElementById('ollamaHost'),  'ollamaHost input missing');
+    assert.ok(doc.getElementById('ollamaHost'), 'ollamaHost input missing');
   });
 
   it('4.10 — Ollama model name should default to "llama3"', () => {
@@ -485,7 +489,7 @@ describe('6 ▸ User Prompt', () => {
     const counter = doc.getElementById('tokenCounter');
     // Should show 100 chars · ~25 tokens
     assert.ok(counter.textContent.includes('100'), 'Should show 100 chars');
-    assert.ok(counter.textContent.includes('25'),  'Should show ~25 tokens');
+    assert.ok(counter.textContent.includes('25'), 'Should show ~25 tokens');
   });
 
   /* ── Clear ──────────────────────────────────────────────── */
@@ -601,7 +605,7 @@ describe('7 ▸ Model Response', () => {
   it('7.4 — clicking Edit again should lock the response', () => {
     click(doc, 'editResponseBtn');
     click(doc, 'editResponseBtn');
-    const ta  = doc.getElementById('modelResponse');
+    const ta = doc.getElementById('modelResponse');
     const btn = doc.getElementById('editResponseBtn');
     assert.strictEqual(ta.readOnly, true);
     assert.strictEqual(btn.textContent, 'Edit');
@@ -657,7 +661,7 @@ describe('7 ▸ Model Response', () => {
     const origCreateEl = doc.createElement.bind(doc);
     doc.createElement = (tag) => {
       const el = origCreateEl(tag);
-      if (tag === 'a') el.click = () => {}; // no-op
+      if (tag === 'a') el.click = () => { }; // no-op
       return el;
     };
     const ta = doc.getElementById('modelResponse');
@@ -702,7 +706,7 @@ describe('7 ▸ Model Response', () => {
     win.eval('showResponseMeta("llama-3.3-70b-versatile", "1.23")');
     const meta = doc.getElementById('responseMeta');
     assert.strictEqual(meta.hidden, false);
-    const tag  = doc.getElementById('responseModelTag');
+    const tag = doc.getElementById('responseModelTag');
     const time = doc.getElementById('responseTime');
     assert.ok(tag.textContent.includes('Llama 3.3 70B'));
     assert.ok(time.textContent.includes('1.23'));
