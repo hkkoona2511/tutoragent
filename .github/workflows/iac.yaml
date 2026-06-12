@@ -36,7 +36,10 @@ jobs:
           if [ "$SG_ID" != "None" ] && [ -n "$SG_ID" ]; then 
             terraform import aws_security_group.tutoragent-sg $SG_ID || true
           fi
-          terraform import aws_ecs_task_definition.tutoragent-task tutoragent-task || true
+          TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition tutoragent-task --query "taskDefinition.taskDefinitionArn" --output text 2>/dev/null || echo "None")
+          if [ "$TASK_DEF_ARN" != "None" ] && [ -n "$TASK_DEF_ARN" ]; then
+            terraform import aws_ecs_task_definition.tutoragent-task $TASK_DEF_ARN || true
+          fi
           sleep 15
           terraform plan -out=tfplan-output.json
       
