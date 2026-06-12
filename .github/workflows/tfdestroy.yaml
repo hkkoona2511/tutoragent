@@ -28,12 +28,15 @@ jobs:
 
     # 5. Initialize the backend to pull your state file
     - name: Terraform Init
+      working-directory: ./iac/terraform
       run: terraform init
 
     # 6. Optional: Generate a preview of what will be destroyed
     - name: Terraform Plan Destroy
+      working-directory: ./iac/terraform
       run: terraform plan -destroy
 
     # 7. Execute the destruction immediately without manual prompt
     - name: Terraform Destroy
+      working-directory: ./iac/terraform
       run: terraform destroy -auto-approve
