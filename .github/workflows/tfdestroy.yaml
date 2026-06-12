@@ -1,0 +1,39 @@
+name: 'Terraform Destroy'
+
+# 1. Protect the workflow by requiring a manual trigger
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-destroy:
+    name: 'Terraform Destroy'
+    runs-on: ubuntu-latest
+
+    # 2. Inject environment variables for cloud authentication
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: 'ap-south-1' # Change to your target region
+
+    steps:
+    # 3. Check out the repository code
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 4. Install the Terraform CLI on the runner
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.15.5" # Specify your Terraform version
+
+    # 5. Initialize the backend to pull your state file
+    - name: Terraform Init
+      run: terraform init
+
+    # 6. Optional: Generate a preview of what will be destroyed
+    - name: Terraform Plan Destroy
+      run: terraform plan -destroy
+
+    # 7. Execute the destruction immediately without manual prompt
+    - name: Terraform Destroy
+      run: terraform destroy -auto-approve
